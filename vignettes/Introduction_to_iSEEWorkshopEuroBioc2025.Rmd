@@ -1,11 +1,22 @@
 ---
-title: "Introduction_to_iSEEWorkshopEuroBioc2025"
-output: rmarkdown::html_vignette
+title: "iSEE Workshop - EuroBioc2025"
+author: "Federico Marini^[marinif@uni-mainz.de],  Najla Abassi^[abassina@uni-mainz.de], Kevin Rue-Albrecht^[kevinrue67@gmail.com], Charlotte Soneson^[charlottesoneson@gmail.com], Aaron Lun^[infinite.monkeys.with.keyboards@gmail.com]"
+output: 
+    html_document:
+      theme: cosmo
+      toc: yes
+      toc_float: yes
+      number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Introduction_to_iSEEWorkshopEuroBioc2025}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{iSEE Workshop - EuroBioc2025}
+  %\VignettePackage{iSEEWorkshopEuroBioc2025}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: iUSEiSEErefs.bib
 ---
+
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -15,5 +26,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(iSEEWorkshopEuroBioc2025)
+library("iSEEWorkshopEuroBioc2025")
 ```
+
