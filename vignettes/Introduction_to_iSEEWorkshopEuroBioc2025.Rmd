@@ -1,5 +1,6 @@
 ---
-title: "iSEE Workshop - EuroBioc2025"
+title: "iSEE therefore I explore (better)"
+subtitle: "iSEE Workshop - EuroBioc2025"
 author: "Federico Marini^[marinif@uni-mainz.de],  Najla Abassi^[abassina@uni-mainz.de], Kevin Rue-Albrecht^[kevinrue67@gmail.com], Charlotte Soneson^[charlottesoneson@gmail.com], Aaron Lun^[infinite.monkeys.with.keyboards@gmail.com]"
 output: 
     html_document:
@@ -8,7 +9,7 @@ output:
       toc_float: yes
       number_sections: true
 vignette: >
-  %\VignetteIndexEntry{iSEE Workshop - EuroBioc2025}
+  %\VignetteIndexEntry{iSEE therefore I explore (better)}
   %\VignettePackage{iSEEWorkshopEuroBioc2025}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
@@ -17,15 +18,825 @@ editor_options:
 bibliography: iUSEiSEErefs.bib
 ---
 
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+suppressPackageStartupMessages({
+  library("BiocStyle")
+  library("iSEE")
+})
 ```
+
+```{r, eval=!exists("SCREENSHOT"), include=FALSE}
+SCREENSHOT <- function(x, ...) knitr::include_graphics(x)
+```
+
+# About this workshop
+
+iSEE (Interactive SummarizedExperiment Explorer) is a Bioconductor software package [@Rue-Albrecht2018-isee] that provides a powerful and extendable multi-purpose visual interface for exploring data stored in a SummarizedExperiment object, using the R/shiny framework.  
+Given the widespread adoption of SummarizedExperiment and its derivatives (SingleCellExperiment, SpatialExperiment, …) throughout the Bioconductor ecosystem and the smooth interoperability from other main frameworks (Seurat, Scanpy/AnnData), this package can be a ubiquitous companion across all the main steps of efficient analysis workflows, from the initial quality control all the way down to deploying data to accompany publications. 
+
+In this workshop, we will provide an overview of its main functionality, displaying how the most common tasks in data exploration and interpretation can be achieved within this package, which delivers an efficient combination of interactivity and reproducibility.  
+Attendees will be able to learn hands-on through a collection of vignettes that compose a masterclass-like full course on iSEE and its related packages (iSEEu, iSEEde, iSEEpathways, iSEEindex, and more). We aim to empower users in a "from zero to hero" format to explore in depth a wide spectrum of datasets, providing a free, natural, efficient, and customizable solution to achieve this within the Bioconductor project, and ultimately extract valuable insight from omics datasets in interdisciplinary settings. 
+
+# Installing and loading the required packages
+
+To run the content presented in this demo, make sure to first run this following chunk in your R session.
+This will install the workshop package as well as all required dependencies.
+
+```{r eval = FALSE}
+install.packages("BiocManager")
+BiocManager::install("iSEE/iSEEWorkshopEuroBioc2025", 
+                     dependencies = TRUE, 
+                     build_vignettes = TRUE)
+```
+
+Let's start!
 
 ```{r setup}
 library("iSEEWorkshopEuroBioc2025")
 ```
 
+This command will load all required dependencies and set you up for the upcoming session!
+
+Given the very interactive and hands-on nature of this workshop, most of its execution will be guided during the live presentation.  
+This vignette is intended as a fille rouge through it, with constant reminders that there's the iUSEiSEE package, which is possibly the most comprehensive collection of resources on how to use iSEE, from beginner level, all the way to its pro-like features (and extensions!).
+
+The packages that will be used in this workshop are essentially listed below:
+
+```{r, message=FALSE, warning=FALSE}
+# the essentials
+library("SingleCellExperiment")
+library("iSEE")
+library("TENxPBMCData")
+
+# some extensions of the iSEE package itself
+library("iSEEu")
+library("iSEEhex")
+library("iSEEde")
+library("iSEEpathways")
+library("iSEEhub")
+library("iSEEindex")
+```
+
+
+# Got data?
+
+Most of the functionality covered in this workshop will be illustrated by means of a single-cell RNA sequencing dataset that is included in the package. 
+You can load the dataset as follows: 
+
+```{r}
+sce <- readRDS(
+  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iSEEWorkshopEuroBioc2025")
+)
+
+sce
+```
+
+This dataset has already been processed following established principles for single-cell analysis with Bioconductor. 
+To see how the processing was done, consult the [script](https://github.com/iSEE/iSEEWorkshopEuroBioc2025/blob/main/inst/create_datasets.Rmd#L1) provided with the workflow package. 
+
+Specifically, this object contains some of the "classical" relevant sample metadata in its `colData` slot, covering both categorical (cell type, cluster labels) and numerical (stemming from QC steps):
+
+```{r}
+colData(sce)
+```
+
+## Wait, what if I have a Seurat object or I did work with Scanpy?
+
+No problem, you are just one conversion step away from using iSEE, pinky swear.
+
+The [create_datasets.Rmd](https://github.com/iSEE/iSEEWorkshopEuroBioc2025/blob/main/inst/create_datasets.Rmd) notebook has a section that covers exactly that - or you might already be familiar with `zellkonverter` (https://bioconductor.org/packages/zellkonverter/) and/or `anndataR` (https://anndatar.data-intuitive.com/).
+
+# A quick poll
+
+* What type of plots do you commonly generate for your (single-cell) expression data?
+
+* Do you commonly present a collection of plots within a group meeting/a meeting with your collaborators?
+
+* How many iterations do you need till you reach its final version?
+
+Breaking things down a bit, good chances are there that you can (re)produce these plots within iSEE!
+
+# Everybody likes vanilla ice
+
+... so you might already like vanilla `iSEE`!
+
+You'll start the iSEE app by simply typing
+
+```{r runApp, eval=FALSE}
+iSEE(sce)
+```
+
+Yep, that's really just that!
+
+All you need is a SummarizedExperiment, or anything built on top of that: SingleCellExperiment, SpatialExperiment, DeeDeeExperiment, DESeqDataset, ... just to name a few.
+
+```{r, echo=FALSE, out.width='100%'}
+SCREENSHOT("images/02-isee-initial.png", delay = 40)
+```
+
+## The panel types
+
+There are 8 essential panel types by default within iSEE:
+
+* The **reduced dimension plot** can display any reduced dimension representation that is present in the `reducedDim` slot of the `SingleCellExperiment` object.
+* The **column data plot** can display one or two of the provided column annotations (from the `colData` slot).
+* The **row data plot** displays one or two of the provided row annotations (from the `rowData` slot).
+* The **complex heatmap panel** displays, for any assay, the observed values for a subset of the features across the samples.
+* The **feature assay plot** displays the observed values for one feature across the samples.
+It is also possible to plot the observed values for two features, in a scatter plot.
+* The **sample assay plot** .fullName(SampleAssayPlot())` shows the observed values for all features, for one of the samples. It is also possible to plot the observed values for two samples, in a scatter plot.
+* The **row data table** displays all information provided in the `rowData` slot of the `SummarizedExperiment` object, leveraging the interactivity provided by the `r CRANpkg("DT")` package.
+* The **column data table** displays all information provided in the `colData` slot of the `SummarizedExperiment` object.
+
+These panels can communicate among each other and they are much more powerful than the individual representation they carry, as this allows you to really dig deeper into your data!
+
+## The panel options
+
+Each of the panels available within iSEE have three dedicated sets of controls, and we will look at them in detail. We have **Data** parameters, **Visual** parameters, and **Selection** parameters.
+
+Once we have seen these groups of parameters, let's think of what you can use them for!
+
+### Data parameters {#data-parameters-box}
+
+Each plot panel type has a `Data parameters` collapsible box.
+This box has different content for each panel type, but in all cases it lets the user control the data that is displayed in the plot.
+
+```{r, message=FALSE, echo = FALSE}
+app <- iSEE(sce, initial = list(ColumnDataPlot(
+  PanelWidth = 12L, DataBoxOpen = TRUE,
+  XAxis = "Column data", XAxisColumnData = "Cluster",
+  YAxis = "log10_total"
+)))
+```
+
+```{r, echo=FALSE, out.width='100%'}
+SCREENSHOT("images/02-isee-columndataplot-dataparameters.png", delay = 10)
+```
+
+### Visual parameters {#visual-parameters-box}
+
+In contrast to the `Data parameters` collapsible box that lets users control _what_ is displayed in the plot, the `Visual parameters` box lets users control _how_ the information is displayed.
+
+This collapsible box contains the controls to change the size, shape, opacity, and color of the points, to facet the plot by any available categorical annotation, to subsample points for increased speed of plot rendering, and to control how legends are displayed.
+
+```{r, message=FALSE, echo=FALSE}
+app <- iSEE(sce, initial = list(ColumnDataPlot(
+  PanelWidth = 12L, VisualBoxOpen = TRUE,
+  XAxis = "Column data", XAxisColumnData = "Cluster",
+  YAxis = "log10_total",
+  VisualChoices = c("Color", "Point", "Facet", "Shape", "Size", "Text")
+)))
+```
+
+```{r, echo=FALSE, out.width='100%'}
+SCREENSHOT("images/02-isee-columndataplot-visualparameters.png", delay = 10)
+```
+
+### Selection parameters {#selection-parameter-box}
+
+The `Selection parameters` collapsible box provides controls to transfer selections of points (features or samples) between panels.
+
+We demonstrate examples of point transmission in some dedicated vignettes of the iUSEiSEE workshop, `d03_iSEE_quickrecipes.html`
+
+```{r, message=FALSE, echo = FALSE}
+app <- iSEE(sce, initial = list(ReducedDimensionPlot(
+  PanelWidth = 12L, SelectionBoxOpen = TRUE,
+  Type = "TSNE", ColorBy = "Column data",
+  ColorByColumnData = "Cluster"
+)))
+```
+
+```{r, echo=FALSE, out.width='100%'}
+SCREENSHOT("images/02-isee-reduceddimensionplot-selectionparameters.png", delay = 10)
+```
+
+## Additional controls {#additional-controls}
+
+At the top-right corner of the iSEE application, users can find additional controls for reproducibility, configuration, and help.
+
+```{r, echo = FALSE, eval = TRUE}
+panel_organization_fig <- "images/PanelOrganization.png"
+export_fig <- "images/Export.png"
+documentation_fig <- "images/Documentation.png"
+additional_info_fig <- "images/AdditionalInfo.png"
+```
+
+|              |            |                                        |
+|--------------|:----------:|----------------------------------------|
+| Organization | `r knitr::include_graphics(panel_organization_fig, dpi = 180)` | [Organize panels](#organize-panels) <br> [Examine panel chart](#examine-panel-chart) |
+| Export        | `r knitr::include_graphics(export_fig, dpi = 180)`       | [Download panel output](#download-output) <br> [Extract R code](#extract-r-code) <br> [Display panel settings](#display-panel-settings) |
+| Documentation      | `r knitr::include_graphics(documentation_fig, dpi = 180)`     | [Quick tour](#quick-tour) <br> [Open the vignette](#browse-vignettes) |
+| Additional info    | `r knitr::include_graphics(additional_info_fig, dpi = 180)`    | [About this session](#app-session-info) <br> [About iSEE](#about-isee) |
+
+### Organize panels {#organize-panels}
+
+As mentioned above, the default behaviour of the `iSEE()` function is to launch an instance of the user interface that displays one panel of each of the standard types (provided the underlying data is available, e.g. for reduced dimension plots the `reducedDim` slot is required).
+However, in some cases it is desirable to have multiple panels of the same type, and/or exclude some panel types.
+
+In order to accommodate such situations, users can add, remove, change the order of and resize all panels via the `Organization` menu in the top-right corner.
+
+Clicking in the selectize box listing all current panels will present you with a drop-down menu from which you can choose additional panels to add.
+Similarly, panels can be removed by clicking on the <i class="fa fa-times"></i> icon associated with the panel name.
+
+Each panel can be individually resized by changing the width and height.
+Note that the total width of a row in the interface is 12 units.
+When the width of a panel is greater than the space available, the panel is moved to a new row.
+
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/panel-organization.png", dpi = 180)
+```
+
+### Linking panels and transmitting point selections {#examine-panel-chart}
+
+When exploring data, it is often useful to be able to select a subset of points and investigate different aspects of their characteristic features.
+In `r Biocpkg("iSEE")`, this can be achieved by _selecting_ points in one panel, and _transmitting_ this selection to one or more other panels.
+
+The brushing and point selection can also be programmatically preconfigured.
+
+The button `Examine panel chart` display a graph that reports any active point transmission between panels in the app.
+
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/panel-graph.png", dpi = 180)
+```
+
+### Download panel output {#download-output}
+
+The `Download panel output` button opens a modal window listing all the current panels in the app.
+Checkboxes allow users to select any subset of panels to export.
+Finally, clicking the `Download` button in that modal will prompt the app to save plots to PDF files, tables to CSV files, and package the set of files in a ZIP archive that users can download and save on their computer.
+
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/panel-download.png", dpi = 180)
+```
+
+### Extract R code {#extract-r-code}
+
+The fact that data exploration is done interactively is no reason to forego reproducibility! 
+To this end, `r Biocpkg("iSEE")` lets you export the exact R code used to create each of the currently visible plots.
+
+Importantly, the script reported by `r Biocpkg("iSEE")` contains a short preamble needed to set up variable names that are used in individual panels, including active brushes used to transfer point selections.
+
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/code-tracker.png", dpi = 180)
+```
+
+### Display panel settings {#display-panel-settings}
+
+It can take a great amount of time to achieve a satisfactory panel configuration.
+To avoid the need to manually organize the panels each time the app is opened, `r Biocpkg("iSEE")` offers the possibility to export code that can be reused later to
+programmatically specify how the app is initialized, as well as to inspect and export the current panel settings for future use.
+
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/panel-settings.png", dpi = 180)
+```
+
+### Quick tour {#quick-tour}
+
+One important aspect of visualization is the ability to share your insights with others. 
+A powerful way of easily getting people unfamiliar with your data up to speed is to provide a walkthrough of the interface and the different types of plots that are displayed. 
+With `r Biocpkg("iSEE")`, this can be achieved using _tours_. 
+To configure a tour, you need to create a text file with two columns; named `element` and `intro`, with the former describing the UI element to highlight in each step, and the latter providing the descriptive text that will be displayed.
+
+Clicking the `Quick tour` button launches an interactive tour of the interface using the `r BiocStyle::CRANpkg("rintrojs")` package, highlighting specific elements of the user interface, labeled with information and instructions guiding users through panels and tasks specific to individual apps.
+
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/quick-tour.png", dpi = 180)
+```
+
+You can see a live example of a more complex tour in action in the deployed apps exemplified on the iSEE website, for example <https://hbcc-nimh.shinyapps.io/shinyApp_JNS2023/>.
+
+When configured in an efficient manner, you can consider the tour as a live version of the legend of your figures!
+
+### Open the vignette {#browse-vignettes}
+
+The user interface navigation bar also includes this button to open the introductory vignette to `r Biocpkg("iSEE")` in your we browser.
+
+Depending on the version of `r Biocpkg("iSEE")` that you are using, this will adaptively lead you to a locally built vignette present on your computer, or the _release_ or the _devel_ version of the Bioconductor package landing page, e.g. <`r BiocStyle::Biocpkg("iSEE", vignette = "basic.html", label = paste("Bioconductor", BiocManager::version()))`>.
+
+### Session information {#app-session-info}
+
+This button displays the output of `sessionInfo()`, which is a useful piece of information to report when reporting an issue with an app.
+
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/session-info.png", dpi = 180)
+```
+
+### About iSEE {#about-isee}
+
+This button provides information about the authors of `r Biocpkg("iSEE")`, as well as citation information.
+
+If you use this package, please use the following citation information:
+
+> Rue-Albrecht K, Marini F, Soneson C, Lun ATL (2018). “iSEE: Interactive SummarizedExperiment Explorer.” _F1000Research_, *7*,
+> 741. doi: 10.12688/f1000research.14966.1 (URL: https://doi.org/10.12688/f1000research.14966.1).
+
+A BibTeX entry for LaTeX users is:
+
+```
+@Article{,
+  title = {iSEE: Interactive SummarizedExperiment Explorer},
+  author = {Kevin Rue-Albrecht and Federico Marini and Charlotte Soneson and Aaron T. L. Lun},
+  publisher = {F1000 Research, Ltd.},
+  journal = {F1000Research},
+  year = {2018},
+  month = {Jun},
+  volume = {7},
+  pages = {741},
+  doi = {10.12688/f1000research.14966.1},
+}
+```
+
+## Ready to enjoy the vanilla ice?
+
+... and make the most out of `iSEE`ing your data?
+
+Let's think again about *what* you want to achieve, and we can try together to guess *how* this can be done within iSEE.
+
+# iSEE 101 - What can you do with it?
+
+In this section, we list a number of actions you can perform with the help of iSEE.
+Feel free to try them out already! 
+The `iUSEiSEE` vignettes will go into more details for many of them, but this can be an excellent starter to gain experience and get quickly familiar with iSEE.
+
+* Organize the iSEE panels:
+  - Search for the `Organize panels` button. 
+  - Try to add and remove panels, and resize and reorder the existing ones.
+  - Remember to click on `Apply settings` afterwards. 
+
+* Multiple panels of the same type:
+  - Show two _Reduced dimension plot_ panels; one showing the PCA representation, one showing the t-SNE representation.
+  - Link them together, so that points that are selected in one are highlighted in the other.
+
+* More on `iSEE` links and transmissions:
+  - Start an instance with the default set of panels and explore the different types of plots generated by the Feature assay plot panel using the choices available for the two axes.
+  - Select a set of points in one of the _Feature assay plot_ panels, by drawing a rectangle around them. 
+  - Then open the _Selection parameters_ collapsible box of another _Feature assay plot_ panel, and select the _Feature assay plot_ panel where you made the point selection from the dropdown menu under **Receive column selection from**. 
+  - Note how the points corresponding to the cells that you selected in the first panel are highlighted in the receiving panel. 
+  - You can highlight the points in different ways by changing the **Selection effect**.
+  - `iSEE` can display active links transmitting point selections between panel using the "[Examine panel chart](#additional-controls)" menu.
+
+* Color the points:
+  - Open the `Visual parameters` collapsible box in one of the _Reduced dimension plot_ panels, and set `Color by:` to `Column data`.
+  - Color the cells by `Cluster`, which contains the cluster labels that were assigned to the cells in the preprocessing step.
+  - Color the cells by the log10-transformed number of detected genes (`log10_total`).
+  - Set `Color by:` to `Feature name` in one of the _Reduced dimension plot_ panels, and select one of the genes from the dropdown menu. You can search for a gene of interest by typing in the dropdown box.
+
+* Highlight & zoom:
+  - Set `Color by:` to `Sample name` in one of the Reduced dimension plots, and use the dropdown menu underneath to change the highlighted cell.
+  - Reduce the point size and increase the transparency (i.e. reduce the value for the alpha attribute).
+  - Apply a downsampling grid of 100 horizontal and vertical bins.
+  - As above, select a region in the first panel and transmit the selection to the second one.
+  - Double-click on the area selected in the first panel to zoom and display the same view as the second panel.
+  - Double click again anywhere in the panel to zoom out.
+
+* Launch iSEE with pre-specified configurations:
+  - Start `iSEE` in the default configuration.
+  - Click on the export icon (<i class="fa fa-download fa-1g"></i>) in the top-right corner, and select 'Display panel settings'.
+  - Copy all the code shown in the pop-up window. 
+  - Close the app and paste this code in your R session.
+  - This defines the 'initial' list. Then launch a new instance adding `initial = initial` to the `iSEE` call. 
+  - Note how the app starts in the same configuration as it was before closing. Of course, it is still possible to continue exploring the data interactively - we have only changed the starting configuration.
+  - Start `iSEE` with one _Column data plot_ and one _Row data plot_ panel.
+  - Start `iSEE` in an empty configuration.
+
+* Export code
+  - Click on the export icon (<i class="fa fa-download fa-1g"></i>) in the top-right corner, and select 'Extract the R code'.
+  - Copy the preamble and the code for the first plot from the pop-up window. Close the app and paste the code in your R session.
+  - Note how this recreates the first plot from the app. 
+
+# iSEEu: Introducing modes and some additional panels
+
+The `r Biocpkg("iSEEu")` ("iSEE universe") Bioconductor package defines additional custom panels and predefined 'modes' (startup configurations) that may be useful for specific applications. 
+Here we illustrate the use of the _reduced dimension_ mode, which will start an application with one reduced dimension panel for each reduced dimension representation in the input object.
+
+```{r}
+library("iSEEu")
+app <- modeReducedDim(sce)
+```
+
+```{r, eval = FALSE}
+shiny::runApp(app)
+```
+
+```{r, echo=FALSE, out.width = '100%'}
+SCREENSHOT("images/02-isee-iseeu-modereduceddim.png", delay=10)
+```
+
+Furthermore, since `r Biocpkg("iSEE")` version 2.0.0, users can leverage the implementation of panels as a hierarchy of S4 classes to rapidly extend the framework and develop new types of panels with virtually unlimited freedom of functionality.
+
+For example, the _Hexagonal reduced dimension plot_ - implemented in the `r Biocpkg("iSEEhex")` package - demonstrates an alternative to the downsampling strategy, by summarizing data points into hexagonal bins.
+
+```{r}
+library("iSEEhex")
+app <- iSEE(sce, initial = list(
+  ReducedDimensionPlot(PanelWidth = 6L),
+  ReducedDimensionHexPlot(PanelWidth = 6L)
+))
+```
+
+```{r, eval = FALSE}
+shiny::runApp(app)
+```
+
+```{r, echo=FALSE, out.width = '100%'}
+SCREENSHOT("images/02-isee-iseeu-modereduceddimhex.png", delay=10)
+```
+
+Another useful mode you can use with your data, for example if using iSEE for mass cytometry data, would be the `modeGating`. 
+This launches an app preconfigured with multiple chain-linked feature expression plots for interactive data exploration.
+
+```{r}
+# Select top variable genes ----
+plot_count <- 6
+rv <- rowVars(assay(sce, "logcounts"))
+top_var <- head(order(rv, decreasing=TRUE), plot_count*2)
+top_var_genes <- rownames(sce)[top_var]
+
+plot_features <- data.frame(
+  x = head(top_var_genes, plot_count),
+  y = tail(top_var_genes, plot_count),
+  stringsAsFactors = FALSE
+)
+
+# launch the app itself ----
+
+app <- modeGating(sce, 
+                  plotAssay = "logcounts",
+                  features = plot_features)
+```
+
+```{r, eval = FALSE}
+shiny::runApp(app)
+```
+
+```{r, echo=FALSE, out.width = '100%'}
+SCREENSHOT("images/02-isee-iseeu-modegating.png", delay=20)
+```
+
+`r Biocpkg("iSEEu")` also has a set of extra panels that can come in handy in different situations.
+For example, `iSEEu::AggregatedDotPlot` implements an aggregated dot plot where each feature/group combination is represented by a dot. 
+The color of the dot scales with the mean assay value across all samples for a given group, while the size of the dot scales with the proportion of non-zero values across samples in that group.
+This can be an alternative to a heatmap, and an example can be seen in the chunks below:
+
+```{r}
+app <- iSEE(
+  sce, 
+  initial = list(
+    AggregatedDotPlot(
+      Assay = "logcounts",
+      ColumnDataLabel = "labels_main",
+      CustomRowsText = top_var_genes
+    )
+    
+  )
+)
+```
+
+```{r, echo=FALSE, out.width = '100%'}
+SCREENSHOT("images/02-isee-iseeu-aggrodotplot.png", delay=20)
+```
+
+An overview of other extension packages and the panels they provide can be found on the iSEE website: https://isee.github.io/panels.html.
+
+
+# iSEEfier: starting to use iSEE just became even faster!
+
+Let's say we are interested in visualizing the expression of a list of specific marker genes in one view, or maybe we created different initial states separately, but would like to visualize them in the same instance. 
+As we previously learned, we can do a lot of these tasks by launching the default interface with `iSEE(sce)`, and adding/removing panels as desired. 
+This can involve multiple manual steps (selecting the gene of interest, color by a specific `colData` column, ...), or the execution of multiple lines of setup code.
+The `r Biocpkg("iSEEfier")` package streamlines the process of starting (or if you will, firing up) an `iSEE` instance with a small chunk of code, avoiding the tedious way of setting up every `iSEE` panel individually.
+
+In this section, we will illustrate a simple example of how to use `r Biocpkg("iSEEfier")`. 
+We will use the same `pbmc3k` data we worked with during this workshop.
+
+We start by loading the `iSEEfier` package:
+
+```{r}
+library("iSEEfier")
+
+# import data
+sce <- readRDS(
+  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iSEEWorkshopEuroBioc2025")
+)
+
+sce
+```
+
+For example, we can be interested in visualizing the expression of *GZMB*, *TGFB*, and *CD28* genes all at once. 
+We start by providing a couple of parameters:
+
+```{r}
+# define the list of genes
+feature_list_1 <- c("GZMB", "TGFB1", "CD28")
+# define the cluster/cell type 
+cluster_1 <- "labels_main"
+```
+
+Now we can pass these parameters into `iSEEinit()` to create a customized initial configuration:
+
+```{r}
+# create an initial state with iSEEinit
+initial_1 <- iSEEinit(sce,
+                      features = feature_list_1,
+                      clusters = cluster_1,
+                      add_markdown_panel = TRUE)
+```
+
+We can then pass the generated `initial_1` list as the `initial` argument in the `iSEE()` call:
+
+```{r}
+app <- iSEE(sce, initial = initial_1)
+```
+
+This is how it would look like:
+
+```{r, echo=FALSE, out.width='100%'}
+SCREENSHOT("images/04-isee-on-fier.png", delay = 30)
+```
+
+
+While we are visualizing the expression of these genes, we might want to take some notes (gene X is more expressed in a certain cell type/cluster than some others, maybe we are trying to annotate the cells ourselves if the annotation wasn't available...).  
+For this, we used the argument `add_markdown_panel = TRUE`. It will display a `MarkdownBoard` panel where we can note our observations without leaving the app.
+
+We can check the initial's content, or how the included panels are linked between each other without running the app with `view_initial_tiles()` and `view_initial_network()`:
+
+```{r}
+# display a graphical representation of the initial configuration, 
+# where the panels are identified by their corresponding colors
+view_initial_tiles(initial = initial_1)
+# display a network visualization for the panels
+view_initial_network(initial_1, plot_format = "igraph")
+```
+
+Another alternative for network visualization would use the interactive widget provided by `visNetwork`:
+
+```{r}
+view_initial_network(initial_1, plot_format = "visNetwork")
+```
+
+It is also possible to use `r Biocpkg("iSEEfier")` to combine multiple initial configurations into one:
+
+```{r}
+# create a second initial configuration
+feature_list_2 <- c("CD74", "CD79B")
+initial_2 <- iSEEinit(sce,
+                      features = feature_list_2,
+                      clusters = cluster_1)
+
+# merge with the previous one
+merged_config <- glue_initials(initial_1, initial_2)
+
+# check out the content of merged_config
+view_initial_tiles(initial = merged_config)
+```
+
+`?iSEEfier` is always your friend whenever you need further documentation on the package/a certain function and how to use it.
+
+# iSEE more than one dataset!
+
+## iSEEhub: `iSEE`ing the ExperimentHub datasets
+
+The `r Biocpkg("iSEEhub")` package provides a custom landing page for an `r Biocpkg("iSEE")` application interfacing with the Bioconductor `r Biocpkg("ExperimentHub")`. 
+The landing page allows users to browse the ExperimentHub, select a data set, download and cache it, and import it directly into an iSEE app.
+
+```{r}
+library("iSEE")
+library("iSEEhub")
+
+ehub <- ExperimentHub()
+app <- iSEEhub(ehub)
+```
+
+```{r, echo=FALSE}
+SCREENSHOT("images/04-iseehub.png", delay = 20)
+```
+
+<!-- Possible actions: -->
+<!-- select a dataset from DuoClustering -->
+<!-- start iSEE on that -->
+
+## iSEEindex: one instance of `iSEE` to explore them all
+
+`r Biocpkg("iSEEindex")` provides an interface to **any** collection of data sets within a single iSEE web-application.  
+The main functionality of this package is to define a custom landing page allowing app maintainers to list a custom collection of data sets that users can select from and directly load objects into an iSEE web application.
+To see how to configure such an app, we will create a small example:
+
+```{r}
+library("iSEE")
+library("iSEEindex")
+
+bfc <- BiocFileCache(cache = tempdir())
+
+dataset_fun <- function() {
+  x <- yaml::read_yaml(system.file(package = "iSEEindex", "example.yaml"))
+  x$datasets
+}
+initial_fun <- function() {
+  x <- yaml::read_yaml(system.file(package = "iSEEindex", "example.yaml"))
+  x$initial
+}
+app <- iSEEindex(bfc, dataset_fun, initial_fun)
+```
+
+```{r, echo=FALSE}
+SCREENSHOT("images/04-iseeindex.png", delay = 20)
+```
+
+
+A more elaborate example (referring to the work in [@Rigby2023]) is available at [https://rehwinkellab.shinyapps.io/ifnresource/](https://rehwinkellab.shinyapps.io/ifnresource/). 
+The source can be found at [https://github.com/kevinrue/IFNresource](https://github.com/kevinrue/IFNresource). 
+
+<!-- Possible actions: -->
+<!-- navigate to github repo -->
+<!-- explore the app.R file -->
+<!-- check the initial state files -->
+<!-- have a look at the configuration yaml -->
+
+Potential use cases can include:
+
+* An app to present and explore the different datasets in your next publication
+* An app to explore collection of datasets collaboratively, in consortium-like initiatives
+* An app to mirror and enhance the content of e.g. the cellxgene data portal
+
+
+# Good tips for some exemplary use cases
+
+This section covers some suggestions and tips on how to use iSEE for the specific objectives mentioned in their titles.
+
+*Alle gute Dinge sind drei*, so goes the adage in German. Hope the three tips for each case do help you, otherwise you can simply reach out!
+
+## "I'm still doing QC dude"
+
+1. Open up the panels either in the default mode, or just use `iSEEu::modeEmpty()` to start easy
+1. Store the configuration of the set of panels once you achieved the setup you needed
+1. There is literally no problem in opening multiple panels of the same type, especially if they display complementary information
+
+## "I'm exploring around the data and I am diving deep"
+
+1. It might be useful to have a look at the connections between the different panels, to keep an overview on what you are displaying, and what is linked to what
+1. You can always save each of the current plot as a png image - after all, it is a web application...
+1. You can take a snapshot of the code underlying *all* the outputs you are seeing at any time point, just use the magic wand!
+
+## "I have my lab meeting next week"
+
+1. There's no need to be stingy on the panels you can show - well, the RAM of your machine might see this differently
+1. Choose some compelling values for the data-visual-selection parameters, and export the `initial` configuration so that you have it ready once the group meeting is starting, and you don't have to blame the app for crashing
+1. Consider saving all the output components you generated with the "Download panel output" button
+
+## "I am done with one dataset and I want to publish it"
+
+1. Come up with the best configuration of panels that tells the story right
+1. Put together a compelling tour to tell that story, highlighting different components of what people will see in the app once published
+1. Choose a nice title and have it set for the app and the tab it will be displayed into
+
+## "I even have a collection of data, is there something we can do there?"
+
+1. Collect the individual datasets as individual objects and place them possibly in the same location
+1. Have a look in detail at the iSEEindex way of accessing the resources - the `iSEEindexRunrResource` might give you just the perfect level of flexibility to read in the data *any way you want within R*
+1. Write up a nice yaml entry about each dataset and each `initial` configurations, including a tour for each
+
+## "I am just interested in looking at markers and want to make it in the most efficient manner"
+
+1. Start easy (empty) and keep adding, store the `initial` configuration, rinse & repeat
+1. If you are skilled, you can easily script away the `initial` list by specifying only the essential non-default arguments
+1. Use `iSEEfier`'s functionality for that - `iSEEinit()` and `iSEEmarker()`can save you a lot of time, and you can easily glue together the different `init` pieces!
+
+## "I want to generate and explore the results of pseudobulk DE analysis on single cell data. Helpz?"
+
+1. Use a framework such as `muscat` to do this properly!
+1. Take the output of the `pbDS()` function and wrangle it a bit to enter its content into an object of the `DeeDeeExperiment` class, which is able to elegantly store and organize your DEA (and FEA) results!
+1. Launch iSEE on that very `DeeDeeExperiment` object - your data will be in, unaltered, and all the relevant information will be placed inside this, so that you can easily access the DE results within iSEE
+
+<details>
+<summary>
+Here's a compact way of how you can do that!
+</summary>
+
+Courtesy to Najla Abassi ;)
+
+```{r eval=FALSE}
+## create res, a list to hold pseudobulk DE results for all contrasts
+for (i in names(contrast)) {
+  cat("Contrast: ", i,"\n")
+  res <- pbDS(pb,
+              design = mm,
+              contrast = contrast[[i]],
+              verbose = TRUE,
+              BPPARAM = BiocParallel::MulticoreParam(6))
+  
+  results_list[[i]] <- res
+}
+
+## Extract one of the contrasts, for demonstration purposes
+contrast_vtp_DMSO <- res$table$VTP-DMSO
+
+## Renaming columns cleverly
+for (cell in names(contrast_vtp_DMSO)) {
+  contrast_vtp_DMSO[[cell]] <-
+  contrast_vtp_DMSO[[cell]] |>
+  dplyr::rename(log2FoldChange = logFC,
+                pvalue = p_val,
+                padj = p_adj.loc)
+  
+  rownames(contrast_vtp_DMSO[[cell]]) <- contrast_vtp_DMSO[[cell]]$gene
+}
+
+## Optional: update de + enrich list names
+new_names <- c(
+  "NK1 A+B" = "NK1_A_B",
+  "NK1 C" = "NK1_C",
+  "NK2" = "NK2",
+  "NK3" = "NK3" ,
+  "NKint" = "NKint"
+)
+names(contrast_vtp_DMSO) <- new_names[names(contrast_vtp_DMSO)]
+names(func_res) <- new_names[names(func_res)]
+
+## Create the dde object
+dde <- DeeDeeExperiment(sce_NKcells, # sce object
+                        de_results = contrast_vtp_DMSO, # DEA results
+                        enrich_results = func_res # FEA results
+                        )
+
+## Launch iSEE!
+iSEE(dde)
+```
+
+</details>
+
+## "I feel almighty and I want to develop a new panel type for iSEE! Where can I start?"
+
+1. Go bold! But first have a glance at the iSEE book (https://isee.github.io/iSEE-book/) to make sure you have a good understanding of how iSEE's panels work
+1. Check out one of the existing custom panels that are available (e.g. within iSEEu, but not limited to that)
+1. Sometimes it is even easier to "re-purpose" the existing panels for your objective. For example, got spatial data? The column data panel can simply be used to display the x and y coordinates of the data at hand!
+
+An example? See the beautiful `iSEEtree` extension realized by Giulio Benedetti [@Benedetti2024], which enables you to explore in depth your microbiome data!
+
+# A quick rundown on iSEE's main parameters
+
+... and some tips on how and when to make the most out of these, especially if you have never checked them out:
+
+* `initial`: Can import any specification of the initial panel setup. Be that empty, written programmatically, or simply exported from a running instance of the app. It can look like it is a mouthful of code, but it is guaranteed to work!
+
+* `colormap`: Your best friend if you want to control how colours are handled within iSEE. You can choose custom colormaps to apply to individual assays, colData and rowData covariates. It might take a bit to get it tailored to your dataset, but it is totally worth the effort!
+
+* `landingPage`: A powerful means to change the way of how iSEE starts and is ready to present the datasets to you. 
+
+* `tour`: Possibly the best way to tell an impactful story with your datasets. Surely an excellent way of auto-generating some embedded, live documentation that allows users to display the information while they proceed hands-on- This is based on the `rintrojs` package
+
+* `appTitle` and `tabTitle`: These two control the title to be displayed *in the app* and *in the browser tab* - useful if you are deploying your own data and you want to control these aspects as well!
+
+* `voice`: Yep, you can control iSEE with your voice. Nope, it is not as flexible as asking Alexa/Echo...
+See the dedicated vignette within the iSEE package for this!
+
+* `bugs`: The only way so far to have bugs within iSEE :)
+
+
+# "I saw them use iSEE"
+
+You're right! There's quite a list of apps published that directly make good use of iSEE and its functionality!
+
+Do you want to be the next one?
+
+Take some inspiration from...
+
+* https://hbcc-nimh.shinyapps.io/shinyApp_JNS2023/
+
+* http://shiny.imbei.uni-mainz.de:3838/iSEE_CellCousin/ [@Eski2025-an]
+
+* https://shiny.mpl.mpg.de/wehner_lab/spinal_cord_regeneration_atlas/ [@John2025-nh]
+
+* https://libd.shinyapps.io/pseudobulk_HPC/
+
+* https://libd.shinyapps.io/HPC_snRNAseq_data/
+
+* https://rehwinkellab.shinyapps.io/ifnresource/ [@Rigby2023]
+
+* miaDash - https://miadash-microbiome.2.rahtiapp.fi/
+
+* your soon-to-deployed instance?
+
+
+# We want more!
+
+... and we got you covered!
+
+The [iUSEiSEE](https://iSEE.github.io/iUSEiSEE) repo is probably the most comprehensive set of information about iSEE and all its capabilities, and will be kept up to data as new features will come out (e.g. new extensions or panel types).
+
+
+# Session info {-}
+
+<details>
+<summary><b>
+Session info
+</b></summary>
+```{r}
+sessionInfo()
+```
+</details>
+
+# References {-}
