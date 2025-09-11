@@ -774,7 +774,7 @@ iSEE(dde)
 1. Check out one of the existing custom panels that are available (e.g. within iSEEu, but not limited to that)
 1. Sometimes it is even easier to "re-purpose" the existing panels for your objective. For example, got spatial data? The column data panel can simply be used to display the x and y coordinates of the data at hand!
 
-An example? See the beautiful `iSEEtree` extension realized by Giulio Benedetti [@Benedetti2024], which enables you to explore in depth your microbiome data!
+An example? See the beautiful `iSEEtree` extension realized by Giulio Benedetti [@Benedetti2024], which enables you to explore in depth your microbiome data! This is now also on Bioconductor, see `r Biocpkg("iSEEtree")` for more.
 
 # A quick rundown on iSEE's main parameters
 
