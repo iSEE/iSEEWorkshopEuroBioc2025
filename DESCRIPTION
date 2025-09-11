@@ -57,6 +57,7 @@ Suggests:
     iSEEindex,
     iSEEfier,
     iSEEhex,
+    DeeDeeExperiment,
     yaml,
     BiocStyle,
     fgsea,
