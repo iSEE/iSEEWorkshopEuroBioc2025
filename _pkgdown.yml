@@ -1,4 +1,17 @@
-url: ~
+url: https://iSEE.github.io/iSEEWorkshopEuroBioc2025
+
 template:
   bootstrap: 5
+  bslib:
+    bootswatch: flatly
+    base_font: {google: "Atkinson Hyperlegible"}
+    heading_font: {google: "Atkinson Hyperlegible"}
+    code_font: {google: "IBM Plex Mono"}
+home:
+  title: "iSEEWorkshopEuroBioc2025"
+  type: inverse
 
+navbar:
+  right:
+   - icon: fa-github
+     href: https://github.com/iSEE/iSEEWorkshopEuroBioc2025
