@@ -1,4 +1,4 @@
-# iSEEWorkshopEuroBioc2025 <img src="vignettes/iSEE.png" align="right" width="120" />
+# iSEEWorkshopEuroBioc2025 <img src="man/figures/iSEE.png" align="right" width="120" />
 
 Learn how to use the iSEE package, in a compact 2-hours workshop!
 
