@@ -90,11 +90,11 @@ accompany publications.</p>
 functionality, displaying how the most common tasks in data exploration
 and interpretation can be achieved within this package, which delivers
 an efficient combination of interactivity and reproducibility.<br>
-Attendees will be able to learn hands-on through a collection of
-vignettes that compose a masterclass-like full course on iSEE and its
-related packages (iSEEu, iSEEde, iSEEpathways, iSEEindex, and more). We
-aim to empower users in a “from zero to hero” format to explore in depth
-a wide spectrum of datasets, providing a free, natural, efficient, and
+Attendees will be able to learn hands-on through a rich vignette that
+composes a masterclass-like full course on iSEE and its related packages
+(iSEEu, iSEEde, iSEEpathways, iSEEindex, and more). We aim to empower
+users in a “from zero to hero” format to explore in depth a wide
+spectrum of datasets, providing a free, natural, efficient, and
 customizable solution to achieve this within the Bioconductor project,
 and ultimately extract valuable insight from omics datasets in
 interdisciplinary settings.</p>
@@ -305,10 +305,9 @@ samples.</li>
 <li>The <strong>feature assay plot</strong> displays the observed values
 for one feature across the samples. It is also possible to plot the
 observed values for two features, in a scatter plot.</li>
-<li>The <strong>sample assay plot</strong> .fullName(SampleAssayPlot())`
-shows the observed values for all features, for one of the samples. It
-is also possible to plot the observed values for two samples, in a
-scatter plot.</li>
+<li>The <strong>sample assay plot</strong> shows the observed values for
+all features, for one of the samples. It is also possible to plot the
+observed values for two samples, in a scatter plot.</li>
 <li>The <strong>row data table</strong> displays all information
 provided in the <code>rowData</code> slot of the
 <code>SummarizedExperiment</code> object, leveraging the interactivity
@@ -824,9 +823,9 @@ linked between each other without running the app with
 <code class="sourceCode R"><span><span class="co"># display a network visualization for the panels</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_network.html" class="external-link">view_initial_network</a></span><span class="op">(</span><span class="va">initial_1</span>, plot_format <span class="op">=</span> <span class="st">"igraph"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Introduction_to_iSEEWorkshopEuroBioc2025_files/figure-html/unnamed-chunk-38-2.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; IGRAPH 7e9ff96 DN-- 14 4 -- </span></span>
+<pre><code><span><span class="co">#&gt; IGRAPH 0b7da82 DN-- 14 4 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), color (v/c)</span></span>
-<span><span class="co">#&gt; + edges from 7e9ff96 (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from 0b7da82 (vertex names):</span></span>
 <span><span class="co">#&gt; [1] ReducedDimensionPlot1-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [2] ReducedDimensionPlot2-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [3] ReducedDimensionPlot3-&gt;ColumnDataPlot1  </span></span>
@@ -835,9 +834,9 @@ linked between each other without running the app with
 interactive widget provided by <code>visNetwork</code>:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_network.html" class="external-link">view_initial_network</a></span><span class="op">(</span><span class="va">initial_1</span>, plot_format <span class="op">=</span> <span class="st">"visNetwork"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; IGRAPH e1b3067 DN-- 14 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 7d696d4 DN-- 14 4 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), color (v/c)</span></span>
-<span><span class="co">#&gt; + edges from e1b3067 (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from 7d696d4 (vertex names):</span></span>
 <span><span class="co">#&gt; [1] ReducedDimensionPlot1-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [2] ReducedDimensionPlot2-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [3] ReducedDimensionPlot3-&gt;ColumnDataPlot1  </span></span>
