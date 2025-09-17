@@ -27,6 +27,7 @@ suppressPackageStartupMessages({
   library("BiocStyle")
   library("iSEE")
 })
+htmltools::tagList(rmarkdown::html_dependency_font_awesome())
 ```
 
 ```{r, eval=!exists("SCREENSHOT"), include=FALSE}
