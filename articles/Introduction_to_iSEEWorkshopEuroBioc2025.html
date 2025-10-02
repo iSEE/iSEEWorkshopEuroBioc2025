@@ -288,6 +288,15 @@ version?</p></li>
 that: SingleCellExperiment, SpatialExperiment, DeeDeeExperiment,
 DESeqDataset, … just to name a few.</p>
 <p><img src="images/02-isee-initial.png" width="100%"></p>
+<p>Actually, you could even start iSEE <strong>without any
+dataset</strong>, and upload that at runtime.<br>
+You could do so by typing</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://isee.github.io/iSEE/reference/iSEE.html" class="external-link">iSEE</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>This can be relevant if you intend to deploy iSEE in some kind of
+server-like mode (e.g. serving the dataset(s) of your research group, or
+hosting iSEE for <em>anyone</em> to upload their own
+SummarizedExperiment objects, provided as .rds files).</p>
 <div class="section level3">
 <h3 id="the-panel-types">The panel types<a class="anchor" aria-label="anchor" href="#the-panel-types"></a>
 </h3>
@@ -667,10 +676,10 @@ specific applications. Here we illustrate the use of the <em>reduced
 dimension</em> mode, which will start an application with one reduced
 dimension panel for each reduced dimension representation in the input
 object.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/iSEE/iSEEu" class="external-link">"iSEEu"</a></span><span class="op">)</span></span>
 <span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEu/man/modeReducedDim.html" class="external-link">modeReducedDim</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/02-isee-iseeu-modereduceddim.png" width="100%"></p>
 <p>Furthermore, since <em><a href="https://bioconductor.org/packages/3.22/iSEE" class="external-link">iSEE</a></em> version
@@ -681,20 +690,20 @@ panels with virtually unlimited freedom of functionality.</p>
 implemented in the <em><a href="https://bioconductor.org/packages/3.22/iSEEhex" class="external-link">iSEEhex</a></em>
 package - demonstrates an alternative to the downsampling strategy, by
 summarizing data points into hexagonal bins.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/iSEE/iSEEhex" class="external-link">"iSEEhex"</a></span><span class="op">)</span></span>
 <span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://isee.github.io/iSEE/reference/iSEE.html" class="external-link">iSEE</a></span><span class="op">(</span><span class="va">sce</span>, initial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://isee.github.io/iSEE/reference/ReducedDimensionPlot-class.html" class="external-link">ReducedDimensionPlot</a></span><span class="op">(</span>PanelWidth <span class="op">=</span> <span class="fl">6L</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/iSEEhex/man/ReducedDimensionHexPlot-class.html" class="external-link">ReducedDimensionHexPlot</a></span><span class="op">(</span>PanelWidth <span class="op">=</span> <span class="fl">6L</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/02-isee-iseeu-modereduceddimhex.png" width="100%"></p>
 <p>Another useful mode you can use with your data, for example if using
 iSEE for mass cytometry data, would be the <code>modeGating</code>. This
 launches an app preconfigured with multiple chain-linked feature
 expression plots for interactive data exploration.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select top variable genes ----</span></span>
 <span><span class="va">plot_count</span> <span class="op">&lt;-</span> <span class="fl">6</span></span>
 <span><span class="va">rv</span> <span class="op">&lt;-</span> <span class="fu">rowVars</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sce</span>, <span class="st">"logcounts"</span><span class="op">)</span><span class="op">)</span></span>
@@ -712,7 +721,7 @@ expression plots for interactive data exploration.</p>
 <span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEu/man/modeGating.html" class="external-link">modeGating</a></span><span class="op">(</span><span class="va">sce</span>, </span>
 <span>                  plotAssay <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
 <span>                  features <span class="op">=</span> <span class="va">plot_features</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/02-isee-iseeu-modegating.png" width="100%"></p>
 <p><em><a href="https://bioconductor.org/packages/3.22/iSEEu" class="external-link">iSEEu</a></em> also
@@ -724,7 +733,7 @@ value across all samples for a given group, while the size of the dot
 scales with the proportion of non-zero values across samples in that
 group. This can be an alternative to a heatmap, and an example can be
 seen in the chunks below:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://isee.github.io/iSEE/reference/iSEE.html" class="external-link">iSEE</a></span><span class="op">(</span></span>
 <span>  <span class="va">sce</span>, </span>
 <span>  initial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -761,7 +770,7 @@ individually.</p>
 We will use the same <code>pbmc3k</code> data we worked with during this
 workshop.</p>
 <p>We start by loading the <code>iSEEfier</code> package:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/NajlaAbassi/iSEEfier" class="external-link">"iSEEfier"</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># import data</span></span>
@@ -785,14 +794,14 @@ workshop.</p>
 <p>For example, we can be interested in visualizing the expression of
 <em>GZMB</em>, <em>TGFB</em>, and <em>CD28</em> genes all at once. We
 start by providing a couple of parameters:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define the list of genes</span></span>
 <span><span class="va">feature_list_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GZMB"</span>, <span class="st">"TGFB1"</span>, <span class="st">"CD28"</span><span class="op">)</span></span>
 <span><span class="co"># define the cluster/cell type </span></span>
 <span><span class="va">cluster_1</span> <span class="op">&lt;-</span> <span class="st">"labels_main"</span></span></code></pre></div>
 <p>Now we can pass these parameters into <code><a href="https://rdrr.io/pkg/iSEEfier/man/iSEEinit.html" class="external-link">iSEEinit()</a></code> to
 create a customized initial configuration:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create an initial state with iSEEinit</span></span>
 <span><span class="va">initial_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/iSEEinit.html" class="external-link">iSEEinit</a></span><span class="op">(</span><span class="va">sce</span>,</span>
 <span>                      features <span class="op">=</span> <span class="va">feature_list_1</span>,</span>
@@ -800,7 +809,7 @@ create a customized initial configuration:</p>
 <span>                      add_markdown_panel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>We can then pass the generated <code>initial_1</code> list as the
 <code>initial</code> argument in the <code><a href="https://isee.github.io/iSEE/reference/iSEE.html" class="external-link">iSEE()</a></code> call:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://isee.github.io/iSEE/reference/iSEE.html" class="external-link">iSEE</a></span><span class="op">(</span><span class="va">sce</span>, initial <span class="op">=</span> <span class="va">initial_1</span><span class="op">)</span></span></code></pre></div>
 <p>This is how it would look like:</p>
 <p><img src="images/04-isee-on-fier.png" width="100%"></p>
@@ -815,36 +824,36 @@ observations without leaving the app.</p>
 linked between each other without running the app with
 <code><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_tiles.html" class="external-link">view_initial_tiles()</a></code> and
 <code><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_network.html" class="external-link">view_initial_network()</a></code>:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># display a graphical representation of the initial configuration, </span></span>
 <span><span class="co"># where the panels are identified by their corresponding colors</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_tiles.html" class="external-link">view_initial_tiles</a></span><span class="op">(</span>initial <span class="op">=</span> <span class="va">initial_1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Introduction_to_iSEEWorkshopEuroBioc2025_files/figure-html/unnamed-chunk-38-1.png" width="700"></p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<p><img src="Introduction_to_iSEEWorkshopEuroBioc2025_files/figure-html/unnamed-chunk-39-1.png" width="700"></p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># display a network visualization for the panels</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_network.html" class="external-link">view_initial_network</a></span><span class="op">(</span><span class="va">initial_1</span>, plot_format <span class="op">=</span> <span class="st">"igraph"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Introduction_to_iSEEWorkshopEuroBioc2025_files/figure-html/unnamed-chunk-38-2.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; IGRAPH 1ba0d1f DN-- 14 4 -- </span></span>
+<p><img src="Introduction_to_iSEEWorkshopEuroBioc2025_files/figure-html/unnamed-chunk-39-2.png" width="700"></p>
+<pre><code><span><span class="co">#&gt; IGRAPH 91d2bfb DN-- 14 4 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), color (v/c)</span></span>
-<span><span class="co">#&gt; + edges from 1ba0d1f (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from 91d2bfb (vertex names):</span></span>
 <span><span class="co">#&gt; [1] ReducedDimensionPlot1-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [2] ReducedDimensionPlot2-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [3] ReducedDimensionPlot3-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [4] ReducedDimensionPlot4-&gt;FeatureAssayPlot4</span></span></code></pre>
 <p>Another alternative for network visualization would use the
 interactive widget provided by <code>visNetwork</code>:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_network.html" class="external-link">view_initial_network</a></span><span class="op">(</span><span class="va">initial_1</span>, plot_format <span class="op">=</span> <span class="st">"visNetwork"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; IGRAPH 422740e DN-- 14 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH abcef99 DN-- 14 4 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), color (v/c)</span></span>
-<span><span class="co">#&gt; + edges from 422740e (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from abcef99 (vertex names):</span></span>
 <span><span class="co">#&gt; [1] ReducedDimensionPlot1-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [2] ReducedDimensionPlot2-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [3] ReducedDimensionPlot3-&gt;ColumnDataPlot1  </span></span>
 <span><span class="co">#&gt; [4] ReducedDimensionPlot4-&gt;FeatureAssayPlot4</span></span></code></pre></div>
 <p>It is also possible to use <em><a href="https://bioconductor.org/packages/3.22/iSEEfier" class="external-link">iSEEfier</a></em>
 to combine multiple initial configurations into one:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a second initial configuration</span></span>
 <span><span class="va">feature_list_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD74"</span>, <span class="st">"CD79B"</span><span class="op">)</span></span>
 <span><span class="va">initial_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/iSEEinit.html" class="external-link">iSEEinit</a></span><span class="op">(</span><span class="va">sce</span>,</span>
@@ -866,7 +875,7 @@ to combine multiple initial configurations into one:</p>
 <span></span>
 <span><span class="co"># check out the content of merged_config</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/iSEEfier/man/view_initial_tiles.html" class="external-link">view_initial_tiles</a></span><span class="op">(</span>initial <span class="op">=</span> <span class="va">merged_config</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Introduction_to_iSEEWorkshopEuroBioc2025_files/figure-html/unnamed-chunk-40-1.png" width="700"></p>
+<p><img src="Introduction_to_iSEEWorkshopEuroBioc2025_files/figure-html/unnamed-chunk-41-1.png" width="700"></p>
 <p><code><a href="https://rdrr.io/pkg/iSEEfier/man/iSEEfier-pkg.html" class="external-link">?iSEEfier</a></code> is always your friend whenever you need
 further documentation on the package/a certain function and how to use
 it.</p>
@@ -882,7 +891,7 @@ package provides a custom landing page for an <em><a href="https://bioconductor.
 application interfacing with the Bioconductor <em><a href="https://bioconductor.org/packages/3.22/ExperimentHub" class="external-link">ExperimentHub</a></em>.
 The landing page allows users to browse the ExperimentHub, select a data
 set, download and cache it, and import it directly into an iSEE app.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://isee.github.io/iSEE/" class="external-link">"iSEE"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/iSEE/iSEEhub" class="external-link">"iSEEhub"</a></span><span class="op">)</span></span>
 <span></span>
@@ -905,7 +914,7 @@ page allowing app maintainers to list a custom collection of data sets
 that users can select from and directly load objects into an iSEE web
 application. To see how to configure such an app, we will create a small
 example:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://isee.github.io/iSEE/" class="external-link">"iSEE"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/iSEE/iSEEindex" class="external-link">"iSEEindex"</a></span><span class="op">)</span></span>
 <span></span>
@@ -1050,7 +1059,7 @@ iSEE</li>
 <details><summary>
 Here’s a compact way of how you can do that!
 </summary><p>Courtesy to Najla Abassi ;)</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## create res, a list to hold pseudobulk DE results for all contrasts</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">contrast</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Contrast: "</span>, <span class="va">i</span>,<span class="st">"\n"</span><span class="op">)</span></span>
@@ -1185,11 +1194,11 @@ out (e.g. new extensions or panel types).</p>
 <h2 class="unnumbered" id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
 <details><summary><b> Session info </b>
-</summary><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -1218,23 +1227,23 @@ out (e.g. new extensions or panel types).</p>
 <span><span class="co">#&gt;  [9] iSEEde_1.7.0                   iSEEu_1.21.0                  </span></span>
 <span><span class="co">#&gt; [11] iSEEhex_1.11.0                 TENxPBMCData_1.27.0           </span></span>
 <span><span class="co">#&gt; [13] HDF5Array_1.37.0               h5mread_1.1.1                 </span></span>
-<span><span class="co">#&gt; [15] rhdf5_2.53.4                   DelayedArray_0.35.3           </span></span>
+<span><span class="co">#&gt; [15] rhdf5_2.53.5                   DelayedArray_0.35.3           </span></span>
 <span><span class="co">#&gt; [17] SparseArray_1.9.1              S4Arrays_1.9.1                </span></span>
 <span><span class="co">#&gt; [19] abind_1.4-8                    Matrix_1.7-4                  </span></span>
 <span><span class="co">#&gt; [21] iSEEWorkshopEuroBioc2025_1.0.0 iSEE_2.21.1                   </span></span>
 <span><span class="co">#&gt; [23] SingleCellExperiment_1.31.1    SummarizedExperiment_1.39.2   </span></span>
-<span><span class="co">#&gt; [25] Biobase_2.69.1                 GenomicRanges_1.61.4          </span></span>
-<span><span class="co">#&gt; [27] Seqinfo_0.99.2                 IRanges_2.43.1                </span></span>
-<span><span class="co">#&gt; [29] S4Vectors_0.47.1               BiocGenerics_0.55.1           </span></span>
+<span><span class="co">#&gt; [25] Biobase_2.69.1                 GenomicRanges_1.61.5          </span></span>
+<span><span class="co">#&gt; [27] Seqinfo_0.99.2                 IRanges_2.43.5                </span></span>
+<span><span class="co">#&gt; [29] S4Vectors_0.47.4               BiocGenerics_0.55.1           </span></span>
 <span><span class="co">#&gt; [31] generics_0.1.4                 MatrixGenerics_1.21.0         </span></span>
 <span><span class="co">#&gt; [33] matrixStats_1.5.0              BiocStyle_2.37.1              </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] splines_4.5.1            later_1.4.4              urltools_1.7.3.1        </span></span>
 <span><span class="co">#&gt;   [4] filelock_1.0.3           tibble_3.3.0             triebeard_0.4.1         </span></span>
-<span><span class="co">#&gt;   [7] lifecycle_1.0.4          httr2_1.2.1              edgeR_4.7.4             </span></span>
+<span><span class="co">#&gt;   [7] lifecycle_1.0.4          httr2_1.2.1              edgeR_4.7.5             </span></span>
 <span><span class="co">#&gt;  [10] doParallel_1.0.17        lattice_0.22-7           magrittr_2.0.4          </span></span>
-<span><span class="co">#&gt;  [13] limma_3.65.4             sass_0.4.10              rmarkdown_2.29          </span></span>
+<span><span class="co">#&gt;  [13] limma_3.65.5             sass_0.4.10              rmarkdown_2.30          </span></span>
 <span><span class="co">#&gt;  [16] jquerylib_0.1.4          yaml_2.3.10              httpuv_1.6.16           </span></span>
 <span><span class="co">#&gt;  [19] DBI_1.2.3                RColorBrewer_1.1-3       purrr_1.1.0             </span></span>
 <span><span class="co">#&gt;  [22] rappdirs_0.3.3           circlize_0.4.16          ggrepel_0.9.6           </span></span>
@@ -1243,7 +1252,7 @@ out (e.g. new extensions or panel types).</p>
 <span><span class="co">#&gt;  [31] shape_1.4.6.1            farver_2.1.2             ScaledMatrix_1.17.0     </span></span>
 <span><span class="co">#&gt;  [34] viridis_0.6.5            shinyWidgets_0.9.0       jsonlite_2.0.0          </span></span>
 <span><span class="co">#&gt;  [37] GetoptLong_1.0.5         BiocNeighbors_2.3.1      scater_1.37.0           </span></span>
-<span><span class="co">#&gt;  [40] iterators_1.0.14         systemfonts_1.2.3        foreach_1.5.2           </span></span>
+<span><span class="co">#&gt;  [40] iterators_1.0.14         systemfonts_1.3.1        foreach_1.5.2           </span></span>
 <span><span class="co">#&gt;  [43] tools_4.5.1              ragg_1.5.0               Rcpp_1.1.0              </span></span>
 <span><span class="co">#&gt;  [46] glue_1.8.0               BiocBaseUtils_1.11.2     gridExtra_2.3           </span></span>
 <span><span class="co">#&gt;  [49] xfun_0.53                mgcv_1.9-3               DESeq2_1.49.4           </span></span>
@@ -1251,7 +1260,7 @@ out (e.g. new extensions or panel types).</p>
 <span><span class="co">#&gt;  [55] BiocManager_1.30.26      fastmap_1.2.0            rhdf5filters_1.21.0     </span></span>
 <span><span class="co">#&gt;  [58] shinyjs_2.1.0            digest_0.6.37            rsvd_1.0.5              </span></span>
 <span><span class="co">#&gt;  [61] R6_2.6.1                 mime_0.13                textshaping_1.0.3       </span></span>
-<span><span class="co">#&gt;  [64] colorspace_2.1-1         listviewer_4.0.0         RSQLite_2.4.3           </span></span>
+<span><span class="co">#&gt;  [64] colorspace_2.1-2         listviewer_4.0.0         RSQLite_2.4.3           </span></span>
 <span><span class="co">#&gt;  [67] paws.storage_0.9.0       hexbin_1.28.5            httr_1.4.7              </span></span>
 <span><span class="co">#&gt;  [70] htmlwidgets_1.6.4        pkgconfig_2.0.3          gtable_0.3.6            </span></span>
 <span><span class="co">#&gt;  [73] blob_1.2.4               ComplexHeatmap_2.25.2    S7_0.2.0                </span></span>
@@ -1262,7 +1271,7 @@ out (e.g. new extensions or panel types).</p>
 <span><span class="co">#&gt;  [88] cachem_1.1.0             GlobalOptions_0.1.2      stringr_1.5.2           </span></span>
 <span><span class="co">#&gt;  [91] BiocVersion_3.22.0       parallel_4.5.1           miniUI_0.1.2            </span></span>
 <span><span class="co">#&gt;  [94] vipor_0.4.7              AnnotationDbi_1.71.1     desc_1.4.3              </span></span>
-<span><span class="co">#&gt;  [97] pillar_1.11.0            grid_4.5.1               vctrs_0.6.5             </span></span>
+<span><span class="co">#&gt;  [97] pillar_1.11.1            grid_4.5.1               vctrs_0.6.5             </span></span>
 <span><span class="co">#&gt; [100] promises_1.3.3           BiocSingular_1.25.0      beachmat_2.25.5         </span></span>
 <span><span class="co">#&gt; [103] xtable_1.8-4             cluster_2.1.8.1          beeswarm_0.4.0          </span></span>
 <span><span class="co">#&gt; [106] evaluate_1.0.5           cli_3.6.5                locfit_1.5-9.12         </span></span>
@@ -1279,26 +1288,23 @@ out (e.g. new extensions or panel types).</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Benedetti2024" class="csl-entry">
 Benedetti, Giulio, Ely Seraidarian, Theotime Pralas, Akewak Jeba, Tuomas
 Borman, and Leo Lahti. 2024. <span>“iSEEtree: Interactive Explorer for
-Hierarchical Data.”</span> Edited by Shanfeng Zhu. <em>Bioinformatics
-Advances</em> 5 (1). <a href="https://doi.org/10.1093/bioadv/vbaf107" class="external-link">https://doi.org/10.1093/bioadv/vbaf107</a>.
+Hierarchical Data.”</span> <em>Bioinformatics Advances</em> 5 (1). <a href="https://doi.org/10.1093/bioadv/vbaf107" class="external-link">https://doi.org/10.1093/bioadv/vbaf107</a>.
 </div>
 <div id="ref-Eski2025-an" class="csl-entry">
-Eski, Sema Elif, Jiarui Mi, Macarena Pozo-Morales, Gabriel Garnik
-Hovhannisyan, Camille Perazzolo, Rita Manco, Imane Ez-Zammoury, et al.
-2025. <span>“Cholangiocytes Contribute to Hepatocyte Regeneration After
+Eski, Sema Elif, Jiarui Mi, Macarena Pozo-Morales, et al. 2025.
+<span>“Cholangiocytes Contribute to Hepatocyte Regeneration After
 Partial Liver Injury During Growth Spurt in Zebrafish.”</span> <em>Nat.
 Commun.</em> 16 (1): 5260.
 </div>
 <div id="ref-John2025-nh" class="csl-entry">
-John, Nora, Thomas Fleming, Julia Kolb, Olga Lyraki, Sebastian
-Vasquez-Sepulveda, Asha Parmar, Kyoohyun Kim, et al. 2025.
-<span>“Biphasic Inflammation Control by Dedifferentiated Fibroblasts
-Enables Axon Regeneration After Spinal Cord Injury in Zebrafish.”</span>
-<em>bioRxiv</em>.
+John, Nora, Thomas Fleming, Julia Kolb, et al. 2025. <span>“Biphasic
+Inflammation Control by Dedifferentiated Fibroblasts Enables Axon
+Regeneration After Spinal Cord Injury in Zebrafish.”</span> In
+<em>bioRxiv</em>. January.
 </div>
 <div id="ref-Rigby2023" class="csl-entry">
 Rigby, Rachel, Kevin Rue-Albrecht, David Sims, and Jan Rehwinkel. 2023.
