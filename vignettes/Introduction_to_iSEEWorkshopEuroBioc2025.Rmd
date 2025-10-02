@@ -139,6 +139,15 @@ All you need is a SummarizedExperiment, or anything built on top of that: Single
 SCREENSHOT("images/02-isee-initial.png", delay = 40)
 ```
 
+Actually, you could even start iSEE **without any dataset**, and upload that at runtime.  
+You could do so by typing
+
+```{r, eval=FALSE}
+iSEE()
+```
+
+This can be relevant if you intend to deploy iSEE in some kind of server-like mode (e.g. serving the dataset(s) of your research group, or hosting iSEE for *anyone* to upload their own SummarizedExperiment objects, provided as .rds files).
+
 ## The panel types
 
 There are 8 essential panel types by default within iSEE:
